@@ -66,6 +66,7 @@ exe = EXE(
     a.datas,
     [],
     name='RAM Cutter',
+    icon='assets/RAM Cutter.ico',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

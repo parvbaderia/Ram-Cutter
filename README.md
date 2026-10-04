@@ -5,7 +5,6 @@
 
 ![Windows](https://img.shields.io/badge/platform-Windows-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
-![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
 
 ---
 
@@ -13,16 +12,17 @@
 
 > **Just want to use the app?** Follow these three steps — no Python knowledge needed.
 
-### Step 1 — Download the .exe
+### Step 1 — Download the installer
 
-Go to the [Releases page](../../releases/latest) and download **`RAM Cutter.exe`**.
+Go to the [Releases page](../../releases/latest) and download **`RAM Cutter v2.2.0 Setup.exe`**.
 
-> If there's no release yet, ask the developer to run `build.bat` (see below) and
-> share the file from `dist\RAM Cutter.exe`.
+Run the setup wizard and choose the installation directory. Setup creates Start
+Menu and Desktop shortcuts and adds an uninstall entry to Windows Settings.
 
-### Step 2 — Run it
+### Step 2 — Launch RAM Cutter
 
-Double-click **`RAM Cutter.exe`**.
+Leave **Launch RAM Cutter** checked on the Finish screen, or start it from the
+Start Menu or Desktop shortcut after setup.
 
 Windows will show a **blue UAC prompt** asking:
 > *"Do you want to allow this app to make changes to your device?"*
@@ -31,12 +31,13 @@ Click **Yes** — admin rights are required to trim memory and clear the standby
 
 ### Step 3 — Done ✅
 
-The RAM Cutter dashboard opens. No installation, no Python, no command line.
+The RAM Cutter dashboard opens. End users do not need Python, pip, or separate
+runtime dependencies.
 
 > **Windows SmartScreen warning?**
 > If Windows shows *"Windows protected your PC"*, click **More info → Run anyway**.
-> This happens because the .exe is unsigned. The source code is fully open — you
-> can audit every line in this repo before running.
+> The setup and app executables are unsigned. The source code is fully open —
+> you can audit every line in this repo before running.
 
 ---
 
@@ -132,42 +133,38 @@ any specific task), then boosts that app's process priority to **High**.
 
 ---
 
-## 🔨 Building the .exe (for developers)
+## 🔨 Building a release installer (for developers)
 
-> **You only need this section if you want to build the `.exe` yourself to share.**
+> **You only need this section to build a release installer.**
 
-### Requirements
+### Build-machine requirements
 - Python 3.11 or newer — download from [python.org](https://python.org) (tick **"Add Python to PATH"**)
-- Internet connection (to install PyInstaller)
+- Inno Setup 6 — download from [jrsoftware.org](https://jrsoftware.org/isinfo.php)
+- Internet connection for the first build to install the pinned Python build tools
 
 ### Build steps
 
-**Option A — double-click (easiest):**
-
-1. Double-click **`build.bat`** in the project folder.
-2. Wait ~60 seconds while it installs dependencies and builds.
-3. Find the finished app at `dist\RAM Cutter.exe` — share this file.
-
-**Option B — command line:**
+Run **`build.bat`** from the project folder, or from PowerShell:
 
 ```powershell
-# 1. Create and activate a virtual environment (optional but recommended)
-python -m venv .venv
-.venv\Scripts\activate
-
-# 2. Install build dependencies
-pip install psutil>=5.9,<7 pyinstaller>=6,<7
-
-# 3. Build
-python -m PyInstaller "RAM Cutter.spec" --noconfirm
-
-# Output: dist\RAM Cutter.exe
+.\build.bat
 ```
+
+The script creates or reuses `.venv`, installs the exact versions in
+`requirements-build.txt`, builds the standalone executable from
+`RAM Cutter.spec`, and compiles the Inno Setup wizard. It stops with a clear
+error if Python or Inno Setup is unavailable.
+
+The upload-ready installer is **`dist\RAM Cutter v2.2.0 Setup.exe`**. The
+standalone **`dist\RAM Cutter.exe`** is also produced. To release a new version,
+update `version` in `pyproject.toml`; the build script uses it for the installer
+filename and metadata.
 
 The spec file (`RAM Cutter.spec`) is pre-configured with:
 - `--onefile` — single portable `.exe`, no extra folders
 - `--windowed` — no console window
 - `uac_admin=True` — Windows shows the UAC elevation prompt automatically
+- `assets\RAM Cutter.ico` — embedded application icon
 
 ---
 
@@ -201,8 +198,11 @@ python main.py
 | `game_ready.py` | Game Ready orchestration: `run_game_ready()`, `restore_game_ready()`, `GameReadyResult`. |
 | `config.py` | Loads/saves `%APPDATA%\RAMCutter\config.json`. |
 | `status.py` | Thread-safe `AppState` queue (monitor thread → UI thread). |
-| `build.bat` | Double-click to build `dist\RAM Cutter.exe` (no command line needed). |
+| `build.bat` | Builds the standalone executable and versioned Windows installer. |
 | `RAM Cutter.spec` | PyInstaller configuration for the standalone build. |
+| `installer\RAM Cutter.iss` | Inno Setup wizard, shortcuts, install registration, and uninstall configuration. |
+| `requirements-build.txt` | Pinned Python build dependencies for repeatable releases. |
+| `assets\RAM Cutter.ico` | Icon embedded in the executable and used by the installer. |
 | `test_live.py` | Live tests: real process scan, grouping, decision logic, Game Ready (tests 11-16). |
 
 ---
