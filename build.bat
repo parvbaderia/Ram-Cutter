@@ -33,20 +33,18 @@ echo.
 if exist ".venv\Scripts\python.exe" (
     echo [INFO] Using existing .venv
     set PYTHON=.venv\Scripts\python.exe
-    set PIP=.venv\Scripts\pip.exe
 ) else (
     echo [INFO] Creating virtual environment...
     python -m venv .venv
     set PYTHON=.venv\Scripts\python.exe
-    set PIP=.venv\Scripts\pip.exe
     echo [OK] venv created.
 )
 echo.
 
 :: ── 3. Install / upgrade dependencies ────────────────────
 echo [INFO] Installing dependencies (psutil, pyinstaller)...
-%PIP% install --upgrade pip --quiet
-%PIP% install "psutil>=5.9,<7" "pyinstaller>=6,<7" --quiet
+%PYTHON% -m pip install --upgrade pip --quiet
+%PYTHON% -m pip install "psutil>=5.9,<7" "pyinstaller>=6,<7" --quiet
 if errorlevel 1 (
     echo [ERROR] pip install failed. Check your internet connection.
     pause
