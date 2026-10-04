@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# PyInstaller output — the .exe and temp build artifacts are never committed
+# but RAM Cutter.spec IS committed (it defines the build config for contributors)
+*.exe
+*.app
+
+# IDE files
+.idea/
+.vscode/
+*.suo
+*.user
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Config (has user data — don't commit)
+# Uncomment if you want to exclude the user's config:
+# config.json
+
+# Logs
+*.log

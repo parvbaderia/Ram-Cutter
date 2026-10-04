@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "ram-cutter"
+version = "2.2.0"
+description = "Real-time Windows RAM monitor and memory trimmer with a live dashboard UI"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+keywords = ["windows", "memory", "ram", "performance", "monitor", "trim"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Win32 (MS Windows)",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Monitoring",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = [
+    "psutil>=5.9,<7",
+]
+
+[project.optional-dependencies]
+build = [
+    "pyinstaller>=6,<7",
+]
+tray = [
+    # Required only to run tray_app.py (system tray icon)
+    "pystray>=0.19",
+    "Pillow>=10",
+]
+
+[project.scripts]
+ram-cutter = "main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*.py"]
