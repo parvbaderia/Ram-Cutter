@@ -140,7 +140,7 @@ any specific task), then boosts that app's process priority to **High**.
 ### Build-machine requirements
 - Python 3.11 or newer — download from [python.org](https://python.org) (tick **"Add Python to PATH"**)
 - Inno Setup 6 — download from [jrsoftware.org](https://jrsoftware.org/isinfo.php)
-- Internet connection for the first build to install the pinned Python build tools
+- Internet connection when build dependencies in `requirements-build.txt` are not already installed
 
 ### Build steps
 
@@ -156,9 +156,24 @@ The script creates or reuses `.venv`, installs the exact versions in
 error if Python or Inno Setup is unavailable.
 
 The upload-ready installer is **`dist\RAM Cutter v2.2.0 Setup.exe`**. The
-standalone **`dist\RAM Cutter.exe`** is also produced. To release a new version,
-update `version` in `pyproject.toml`; the build script uses it for the installer
-filename and metadata.
+standalone **`dist\RAM Cutter.exe`** is also produced. The installer bundles the
+executable and MIT license locally; it has no download or network install step.
+Users can install and run it offline after downloading the single Setup.exe.
+The default Program Files location requires administrator approval during setup.
+Launching the application separately continues to request elevation through its
+existing UAC manifest. Uninstalling leaves `%APPDATA%\RAMCutter\config.json` intact.
+
+To release a new version, update `version` in `pyproject.toml`; the build script
+uses that value for the installer filename and Windows installed-app version.
+
+### Create a GitHub Release
+
+1. Update `version` in `pyproject.toml` and run `build.bat`.
+2. Push a matching version tag (for example, `v2.2.0`) and open **Releases → Draft a new release** on GitHub.
+3. Select that tag, use a matching release title, and attach only
+   `dist\RAM Cutter v2.2.0 Setup.exe` as the end-user download.
+4. Publish the release. GitHub may also provide its standard source archives;
+   users do not need them to install or run the application.
 
 The spec file (`RAM Cutter.spec`) is pre-configured with:
 - `--onefile` — single portable `.exe`, no extra folders

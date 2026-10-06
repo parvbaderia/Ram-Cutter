@@ -9,17 +9,28 @@ echo   RAM Cutter - Build release installer
 echo  ==========================================
 echo.
 
-set "PYTHON=python"
-where python >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] Python 3.11 or newer was not found in PATH.
-    echo         Install it from https://python.org and enable Add Python to PATH.
+if not exist "pyproject.toml" (
+    echo [ERROR] pyproject.toml was not found. Run build.bat from the project folder.
+    goto :failed
+)
+if not exist "RAM Cutter.spec" (
+    echo [ERROR] RAM Cutter.spec was not found.
+    goto :failed
+)
+if not exist "installer\RAM Cutter.iss" (
+    echo [ERROR] installer\RAM Cutter.iss was not found.
     goto :failed
 )
 
 if exist ".venv\Scripts\python.exe" (
     set "PYTHON=.venv\Scripts\python.exe"
 ) else (
+    where python >nul 2>&1
+    if errorlevel 1 (
+        echo [ERROR] Python 3.11 or newer was not found in PATH.
+        echo         Install it from https://python.org and enable Add Python to PATH.
+        goto :failed
+    )
     echo [INFO] Creating build virtual environment...
     python -m venv .venv
     if errorlevel 1 goto :failed
@@ -49,6 +60,14 @@ if not defined ISCC (
     echo         Install it from https://jrsoftware.org/isinfo.php and run build.bat again.
     goto :failed
 )
+if not exist "assets\RAM Cutter.ico" (
+    echo [ERROR] assets\RAM Cutter.ico was not found.
+    goto :failed
+)
+if not exist "LICENSE" (
+    echo [ERROR] LICENSE was not found.
+    goto :failed
+)
 
 echo [INFO] Installing pinned build dependencies...
 "%PYTHON%" -m pip install --disable-pip-version-check --requirement requirements-build.txt
@@ -59,7 +78,7 @@ echo [INFO] Building standalone executable with PyInstaller...
 if errorlevel 1 goto :failed
 
 echo [INFO] Building RAM Cutter v%APP_VERSION% Setup.exe with Inno Setup...
-"%ISCC%" /O+ /DAppVersion=%APP_VERSION% "installer\RAM Cutter.iss"
+"%ISCC%" /DAppVersion=%APP_VERSION% "installer\RAM Cutter.iss"
 if errorlevel 1 goto :failed
 
 echo.
@@ -67,6 +86,8 @@ echo  ==========================================
 echo   BUILD COMPLETE
 echo   Executable: dist\RAM Cutter.exe
 echo   Installer:  dist\RAM Cutter v%APP_VERSION% Setup.exe
+echo.
+echo   The installer bundles the app and license; installation is fully offline.
 echo  ==========================================
 echo.
 pause
